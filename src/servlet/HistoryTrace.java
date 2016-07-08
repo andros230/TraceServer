@@ -21,13 +21,11 @@ public class HistoryTrace extends HttpServlet {
 
 		String uid = request.getParameter("uid");
 		String date = request.getParameter("date");
-		System.out.println(uid);
 
 		String rs = new DbDao().historyTrace(uid, date);
 
 		PrintWriter writer = response.getWriter();
 		writer.write(rs);
-		System.out.println(rs);
 		writer.flush();
 		writer.close();
 

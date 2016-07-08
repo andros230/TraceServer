@@ -24,7 +24,6 @@ public class History extends HttpServlet {
 
 		PrintWriter writer = response.getWriter();
 		writer.write(rs);
-		System.out.println(rs);
 		writer.flush();
 		writer.close();
 

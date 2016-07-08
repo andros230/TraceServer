@@ -21,7 +21,6 @@ public class newUser extends HttpServlet {
 		response.setCharacterEncoding("utf-8");
 		
 		String md5 = request.getParameter("md5");
-		System.out.println(md5);
 		String uid = new DbDao().registerUser(md5);
 		
 		PrintWriter writer = response.getWriter();

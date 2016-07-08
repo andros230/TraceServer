@@ -18,9 +18,10 @@ public class DbDao {
 	// 保存用户MD5
 	public String registerUser(String md5) {
 		Database base = new Database();
-		String uid = null;;
+		String uid = null;
+		;
 		try {
-			 uid = getUid(base,md5);
+			uid = getUid(base, md5);
 			if (uid != null) {
 				base.close();
 				return uid;
@@ -28,7 +29,7 @@ public class DbDao {
 			PreparedStatement statement = base.PreparedStatement("insert into users (md5) values (?)");
 			statement.setString(1, md5);
 			statement.executeUpdate();
-			uid = getUid(base,md5);
+			uid = getUid(base, md5);
 			base.close();
 			return uid;
 		} catch (SQLException e) {
@@ -39,7 +40,7 @@ public class DbDao {
 	}
 
 	// 通过MD5获取UID
-	private String getUid(Database base,String md5) {
+	private String getUid(Database base, String md5) {
 		String uid = null;
 		try {
 			PreparedStatement statement = base.PreparedStatement("select * from users where md5 = ?");
@@ -69,7 +70,6 @@ public class DbDao {
 	}
 
 	private void saveLatLng(Database base, LatLngKit kit) {
-		System.out.println(kit.toString());
 		try {
 			PreparedStatement statement = base.PreparedStatement("insert into latlng (uid, lat, lng, date, time) values (?, ?, ?, ?, ?)");
 			statement.setString(1, kit.getUid());
@@ -110,7 +110,8 @@ public class DbDao {
 		Database base = new Database();
 		String json = null;
 		try {
-			//PreparedStatement statement = base.PreparedStatement("select distinct time from latlng WHERE uid = ? and date = ? order by time");
+			// PreparedStatement statement =
+			// base.PreparedStatement("select distinct time from latlng WHERE uid = ? and date = ? order by time");
 			PreparedStatement statement = base.PreparedStatement("SELECT *, COUNT(DISTINCT time) FROM latlng WHERE uid = ? and date = ? GROUP BY time");
 			statement.setString(1, uid);
 			statement.setString(2, date);
@@ -126,7 +127,6 @@ public class DbDao {
 				kit.setLng(rs_lng);
 				kit.setTime(rs_time);
 				kits.add(kit);
-				System.out.println(kit.toString());
 			}
 			Gson gson = new Gson();
 			json = gson.toJson(kits);
