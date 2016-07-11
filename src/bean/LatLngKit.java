@@ -1,4 +1,4 @@
-package javaBean;
+package bean;
 
 public class LatLngKit {
 	private String uid;
@@ -47,6 +47,7 @@ public class LatLngKit {
 		this.time = time;
 	}
 
+	@Override
 	public String toString() {
 		return "uid:" + uid + " lat:" + lat + " lng:" + lng + " date:" + date + " time:" + time;
 

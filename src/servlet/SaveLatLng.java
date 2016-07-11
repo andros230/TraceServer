@@ -19,11 +19,14 @@ public class SaveLatLng extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 
-		String json = request.getParameter("json");
+
 		PrintWriter writer = response.getWriter();
 		writer.write("YES");
 		writer.flush();
 		writer.close();
+		
+		String json = request.getParameter("json");
 		new DbDao().saveJson(json);
+		
 	}
 }

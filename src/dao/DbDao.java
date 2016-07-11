@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import utils.Database;
+import utils.util;
+
+import bean.LatLngKit;
+import bean.User;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import javaBean.LatLngKit;
 
 public class DbDao {
 
@@ -26,8 +28,9 @@ public class DbDao {
 				base.close();
 				return uid;
 			}
-			PreparedStatement statement = base.PreparedStatement("insert into users (md5) values (?)");
+			PreparedStatement statement = base.PreparedStatement("insert into users (md5,create_time) values (?,?)");
 			statement.setString(1, md5);
+			statement.setString(2, util.nowTime());
 			statement.executeUpdate();
 			uid = getUid(base, md5);
 			base.close();
@@ -35,7 +38,6 @@ public class DbDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return null;
 	}
 
@@ -68,8 +70,17 @@ public class DbDao {
 		}
 		base.close();
 	}
+	
+	
+	public boolean RealTimeSaveLatLng(LatLngKit kit){
+		Database base = new Database();
+		boolean bool =saveLatLng(base, kit);
+		base.close();
+		return bool;
+	}
+	
 
-	private void saveLatLng(Database base, LatLngKit kit) {
+	private boolean saveLatLng(Database base, LatLngKit kit) {
 		try {
 			PreparedStatement statement = base.PreparedStatement("insert into latlng (uid, lat, lng, date, time) values (?, ?, ?, ?, ?)");
 			statement.setString(1, kit.getUid());
@@ -78,9 +89,11 @@ public class DbDao {
 			statement.setString(4, kit.getDate());
 			statement.setString(5, kit.getTime());
 			statement.executeUpdate();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 
 	public String HistoryDate(String uid) {
@@ -110,8 +123,6 @@ public class DbDao {
 		Database base = new Database();
 		String json = null;
 		try {
-			// PreparedStatement statement =
-			// base.PreparedStatement("select distinct time from latlng WHERE uid = ? and date = ? order by time");
 			PreparedStatement statement = base.PreparedStatement("SELECT *, COUNT(DISTINCT time) FROM latlng WHERE uid = ? and date = ? GROUP BY time");
 			statement.setString(1, uid);
 			statement.setString(2, date);
@@ -135,6 +146,81 @@ public class DbDao {
 		}
 		base.close();
 		return json;
+	}
+
+	// 增加openID
+	public String saveOpenID(String uid, String openID, String md5) {
+		Database base = new Database();
+		try {
+
+			PreparedStatement statement2 = base.PreparedStatement("select * from users where openid = ?");
+			statement2.setString(1, openID);
+			ResultSet rs = base.ResultSet(statement2);
+			if (rs.next()) {
+				String rs_uid = rs.getString("uid");
+				PreparedStatement statement = base.PreparedStatement("update users set md5=? where uid=?");
+				statement.setString(1, md5);
+				statement.setString(2, rs_uid);
+				statement.executeUpdate();
+				base.close();
+				return rs_uid;
+			} else {
+				PreparedStatement statement = base.PreparedStatement("update users set openid =?, md5=? where uid=?");
+				statement.setString(1, openID);
+				statement.setString(2, md5);
+				statement.setString(3, uid);
+				statement.executeUpdate();
+				base.close();
+				return uid;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+		base.close();
+		return null;
+
+	}
+
+	// 打开APP时检查帐号是否正常
+	public boolean userCheck(User user) {
+		Database base = new Database();
+		boolean bool = false;
+		try {
+			PreparedStatement statement = base.PreparedStatement("select * from users where openid = ?");
+			statement.setString(1, user.getOpenID());
+			ResultSet rs = base.ResultSet(statement);
+			if (rs.next()) {
+				String rs_md5 = rs.getString("md5");
+				if (rs_md5.equals(user.getMd5())) {
+					bool = true;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		base.close();
+		return bool;
+	}
+	
+	
+	//意见反馈
+	public boolean feedback(String uid, String content){
+		Database base = new Database();
+		try {
+			PreparedStatement statement = base.PreparedStatement("insert into feedback (uid, content, time) values (?, ?, ?)");
+			statement.setString(1, uid);
+			statement.setString(2, content);
+			statement.setString(3, util.nowTime());
+			statement.executeUpdate();
+			base.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		base.close();
+		return false;
 	}
 
 }
