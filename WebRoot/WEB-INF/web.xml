@@ -53,6 +53,27 @@
     <servlet-name>RealTimeSaveLatLng</servlet-name>
     <servlet-class>servlet.RealTimeSaveLatLng</servlet-class>
   </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>CreateGroup</servlet-name>
+    <servlet-class>servlet.CreateGroup</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>JoinGroup</servlet-name>
+    <servlet-class>servlet.JoinGroup</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GroupList</servlet-name>
+    <servlet-class>servlet.GroupList</servlet-class>
+  </servlet>
+
+
+
 
 
 
@@ -92,6 +113,18 @@
   <servlet-mapping>
     <servlet-name>RealTimeSaveLatLng</servlet-name>
     <url-pattern>/RealTimeSaveLatLng</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CreateGroup</servlet-name>
+    <url-pattern>/CreateGroup</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>JoinGroup</servlet-name>
+    <url-pattern>/JoinGroup</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GroupList</servlet-name>
+    <url-pattern>/GroupList</url-pattern>
   </servlet-mapping>	
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>

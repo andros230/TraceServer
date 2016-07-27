@@ -3,7 +3,10 @@ package servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,11 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import utils.Database;
-import utils.util;
+import bean.Group;
 
+import com.google.gson.Gson;
 
-public class Feedback extends HttpServlet {
-
+public class GroupList extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -25,36 +28,35 @@ public class Feedback extends HttpServlet {
 		response.setCharacterEncoding("utf-8");
 
 		String uid = request.getParameter("uid");
-		String content = request.getParameter("content");
 
-		boolean rs = feedback(uid, content);
+		String rs = groupList(uid);
 		PrintWriter writer = response.getWriter();
-		if (rs) {
-			writer.write("YES");
-		} else {
-			writer.write("NO");
-		}
-
+		writer.write(rs);
 		writer.flush();
 		writer.close();
-
 	}
 
-	// 意见反馈
-	private boolean feedback(String uid, String content) {
+	// 群列表
+	private String groupList(String uid) {
 		Database base = new Database();
 		try {
-			PreparedStatement statement = base.PreparedStatement("insert into feedback (uid, content, time) values (?, ?, ?)");
+			PreparedStatement statement = base.PreparedStatement("select * from group1 where uid=?");
 			statement.setString(1, uid);
-			statement.setString(2, content);
-			statement.setString(3, util.nowTime());
-			statement.executeUpdate();
+			ResultSet rs = base.ResultSet(statement);
+			List<Group> list = new ArrayList<Group>();
+			while (rs.next()) {
+				String rs_groupID = rs.getString("group_id");
+				Group group = new Group();
+				group.setGroupID(rs_groupID);
+				list.add(group);
+			}
 			base.close();
-			return true;
+			Gson gson = new Gson();
+			return gson.toJson(list);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		base.close();
-		return false;
+		return null;
 	}
 }
